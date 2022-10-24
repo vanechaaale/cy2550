@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+import argparse
+import random 
+
+SYMBOLS = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '.', ':', ';']
+
+class Xkcdpwgen:
+
+    def __init__(self, words, caps, numbers, symbols):
+        self.words = words
+        self.caps = caps
+        self.numbers = numbers
+        self.symbols = symbols
+
+    def run(self):
+         # make password :3
+        word_list = []
+        # pick w random words
+        with open('words.txt', 'r') as file:
+            text = file.read()
+            words = list(map(str, text.split()))
+            for i in range(self.words):
+                word_list.append(random.choice(words))
+    
+         # capitalize first c words in the password and shuffle list
+        for i in range(self.caps):
+            word_list[i] = word_list[i].capitalize()
+            random.shuffle(word_list)
+
+        # add n random numbers between words in the password
+        for i in range(self.numbers):
+            insertion_idx = random.choice(range(0, len(word_list)))
+            word_list.insert(insertion_idx, str(random.randint(0, 99)))
+    
+        # add random symbols in between words in  the password
+        for i in range(self.symbols):
+            insertion_idx = random.choice(range(0, len(word_list)))
+            word_list.insert(insertion_idx, random.choice(SYMBOLS))
+
+        print(''.join(word_list))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Generate a secure, memorable password using the XKCD method')
+
+    parser.add_argument('-w', '--words', type=int, default=4, help='include WORDS words in the password (default=4)')
+    parser.add_argument('-c', '--caps', type=int, default=0, help='capitalize the first letter of CAPS random words (default=0)')
+    parser.add_argument('-n', '--numbers', type=int, default=0, help='insert NUMBERS random numbers in the password (default = 0)')
+    parser.add_argument('-s', '--symbols', type=int, default=0, help='insert SYMBOLS random symbols in the password default = 0)')
+
+    args = parser.parse_args()
+
+    pwgen = Xkcdpwgen(args.words, args.caps, args.numbers, args.symbols)
+    pwgen.run()
+
